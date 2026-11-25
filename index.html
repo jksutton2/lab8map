@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Proportional Symbols</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+		  crossorigin=""/>
+
+         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+		  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+		  crossorigin=""></script>
+		   
+		 <script type="text/javascript" src="data.js"></script>
+		 
+		 <style type="text/css">
+		 
+		  html, body { margin: 0; padding: 0; height: 100%; }
+		  #map { min-height: 100%; }
+		  
+		 </style>
+
+	
+    </head>
+
+    <body>
+	 <div id="map"></div>
+		 
+		
+        <script type="text/javascript">
+
+
+          var map = L.map('map', {
+              center: [41.84, -87.68],
+              zoom: 12
+          });
+
+          L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+               attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
+               maxZoom: 16,
+               minZoom: 3
+            }).addTo(map);
+			
+		
+		var maxVisitor = 653728 // NEW - placed right above L.geoJson
+
+		L.geoJson(data,{
+			pointToLayer(feature,latlng){
+				var visitors = Number(feature.properties.ytd) // NEW
+				var scaler = Math.sqrt(visitors/maxVisitor)*100 // NEW
+
+				// "Marker icons in Leaflet are defined by Icon objects, which are passed as an option when creating markers." (Leaflet handbook)
+				const librarySvg = L.icon({
+					iconUrl: 'librarysvg.svg',
+					iconSize: [scaler, scaler], // NEW replacing the pixel size 90 with the variable "scaler"
+					iconAnchor: [scaler/2, scaler/2], // NEW replacing the pixel size 45 with "scaler" divided by 2
+				});
+
+				return L.marker(latlng, {icon: librarySvg})
+			}
+		}).addTo(map);
+	
+        </script>
+   </body>
+</html>
